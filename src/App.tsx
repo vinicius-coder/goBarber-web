@@ -1,4 +1,4 @@
-import SignIn from './pages/SignIn';
+import React from 'react';
 import SignUp from './pages/SignUp';
 import GlobalStyles from './styles/global';
 
