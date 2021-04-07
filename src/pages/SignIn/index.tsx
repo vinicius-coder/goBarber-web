@@ -27,7 +27,7 @@ const SignIn: React.FC = () => {
     const handleSubmit = useCallback(async (data: SignInFormData) => {
         try {
             formRef.current?.setErrors({});
-            
+
             const schema = Yup.object().shape({
                 email: Yup.string().required('E-mail é obrigatório').email('Digite um e-mail válido'),
                 password: Yup.string().required('Senha é obrigatório'),
@@ -44,9 +44,13 @@ const SignIn: React.FC = () => {
 
         } catch (err) {
 
-            const errors = getValidationsErrors(err);
+            if (err instanceof Yup.ValidationError) {
+                const errors = getValidationsErrors(err);
 
-            formRef.current?.setErrors(errors);
+                formRef.current?.setErrors(errors);
+            }
+
+            
         }
     }, [signIn]);
 

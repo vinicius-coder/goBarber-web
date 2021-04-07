@@ -3,7 +3,7 @@ import api from '../services/api';
 
 interface AuthState {
     token: string;
-    user: object;
+    userDTO: object;
 }
 
 interface SignInCredentials {
@@ -12,13 +12,13 @@ interface SignInCredentials {
 }
 
 interface AuthContextData {
-    user: object;
+    userDTO: object;
     signIn: (credentials: SignInCredentials) => void;
     signOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextData>({
-    user: {},
+    userDTO: {},
     signIn: () => 0,
     signOut: () => 0,
 });
@@ -28,13 +28,13 @@ const AuthProvider: React.FC = ({ children }) => {
 
     const [data, setData] = useState<AuthState>(() => {
         const token = localStorage.getItem('@GoBarber:token');
-        const user = localStorage.getItem('@GoBarber:user');
+        const userDTO = localStorage.getItem('@GoBarber:user');
 
-        if (token && user) {
-            return { token, user: JSON.parse(user) };
+        if (token && userDTO) {
+            return { token, userDTO: JSON.parse(userDTO) };
         }
 
-        return {token: '', user: {}};
+        return {token: '', userDTO: {}};
     });
 
     const signIn = useCallback(async ({ email, password }) => {
@@ -45,23 +45,23 @@ const AuthProvider: React.FC = ({ children }) => {
 
         console.log(response.data)
 
-        const { token, user } = response.data;
+        const { token, userDTO } = response.data;
 
         localStorage.setItem('@GoBarber:token', token);
-        localStorage.setItem('@GoBarber:user', JSON.stringify(user));
+        localStorage.setItem('@GoBarber:user', JSON.stringify(userDTO));
 
-        setData({ token, user });
+        setData({token: '', userDTO: new Object});
     }, []);
 
     const signOut = useCallback(() => {
         localStorage.removeItem('@GoBarber:token');
         localStorage.removeItem('@GoBarber:user');
 
-        setData({token: '', user: {}});
+        setData({token: '', userDTO: new Object});
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user: data.user, signIn, signOut }} >
+        <AuthContext.Provider value={{ userDTO: data.userDTO, signIn, signOut }} >
             {children}
         </AuthContext.Provider>
     );
