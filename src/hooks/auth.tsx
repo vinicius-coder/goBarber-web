@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
+import { object } from 'yup/lib/locale';
 import api from '../services/api';
 
 interface AuthState {
@@ -12,13 +13,13 @@ interface SignInCredentials {
 }
 
 interface AuthContextData {
-    userDTO: object;
+    userDTO: object | null;
     signIn: (credentials: SignInCredentials) => void;
     signOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextData>({
-    userDTO: {},
+    userDTO: null,
     signIn: () => 0,
     signOut: () => 0,
 });
@@ -34,7 +35,7 @@ const AuthProvider: React.FC = ({ children }) => {
             return { token, userDTO: JSON.parse(userDTO) };
         }
 
-        return {token: '', userDTO: {}};
+        return {token: '', userDTO: null};
     });
 
     const signIn = useCallback(async ({ email, password }) => {
@@ -50,6 +51,7 @@ const AuthProvider: React.FC = ({ children }) => {
         localStorage.setItem('@GoBarber:token', token);
         localStorage.setItem('@GoBarber:user', JSON.stringify(userDTO));
 
+
         setData({token: '', userDTO: new Object});
     }, []);
 
@@ -57,7 +59,7 @@ const AuthProvider: React.FC = ({ children }) => {
         localStorage.removeItem('@GoBarber:token');
         localStorage.removeItem('@GoBarber:user');
 
-        setData({token: '', userDTO: new Object});
+        setData({token: '', userDTO: {} });
     }, []);
 
     return (
